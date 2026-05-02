@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>한-베 민요 해석</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: #f0f0f5; min-height: 100vh; padding: 24px 16px; }
+.app { max-width: 560px; margin: 0 auto; }
+.screen { display: none; }
+.screen.active { display: block; }
+.setup-card { background: #fff; border-radius: 16px; padding: 2rem 1.5rem; box-shadow: 0 4px 24px rgba(0,0,0,0.10); }
+.setup-title { font-size: 20px; font-weight: 700; color: #1c1c1e; margin-bottom: 6px; text-align: center; }
+.setup-sub { font-size: 13px; color: #888; text-align: center; margin-bottom: 1.5rem; }
+.field { margin-bottom: 14px; }
+.field label { font-size: 12px; color: #888; display: block; margin-bottom: 5px; }
+.field input { width: 100%; border: 1.5px solid #e5e5ea; border-radius: 10px; padding: 9px 13px; font-size: 15px; color: #1c1c1e; outline: none; font-family: inherit; background: #f7f7f9; transition: border-color 0.15s; }
+.field input:focus { border-color: #7F77DD; background: #fff; }
+.part-btns { display: flex; gap: 8px; margin-bottom: 1.2rem; }
+.part-btn { flex: 1; padding: 11px 8px; border-radius: 12px; border: 1px solid #e5e5ea; font-size: 13px; cursor: pointer; background: #f7f7f9; color: #888; font-family: inherit; transition: all 0.15s; text-align: center; display: flex; align-items: center; justify-content: center; gap: 7px; }
+.part-btn.sel-a { background: #EEEDFE; border-color: #AFA9EC; color: #3C3489; font-weight: 600; }
+.part-btn.sel-b { background: #E1F5EE; border-color: #5DCAA5; color: #085041; font-weight: 600; }
+.start-btn { width: 100%; padding: 13px; border-radius: 12px; border: none; background: #7F77DD; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
+.start-btn:hover { opacity: 0.85; }
+.start-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.board { display: flex; flex-direction: column; gap: 1rem; }
+.board-header { display: flex; align-items: center; justify-content: space-between; }
+.board-title { font-size: 17px; font-weight: 700; color: #1c1c1e; }
+.user-badge { font-size: 12px; padding: 4px 11px; border-radius: 12px; display: flex; align-items: center; gap: 5px; }
+.badge-a { background: #EEEDFE; color: #3C3489; }
+.badge-b { background: #E1F5EE; color: #085041; }
+.tabs { display: flex; border-bottom: 1px solid #e5e5ea; }
+.tab { flex: 1; padding: 11px; text-align: center; font-size: 13px; color: #888; cursor: pointer; border-bottom: 2px solid transparent; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.15s; }
+.tab.active-a { color: #534AB7; border-bottom-color: #7F77DD; font-weight: 600; }
+.tab.active-b { color: #0F6E56; border-bottom-color: #1D9E75; font-weight: 600; }
+.write-area { background: #fff; border: 1px solid #e5e5ea; border-radius: 14px; padding: 1rem; }
+.write-label { font-size: 13px; font-weight: 600; color: #1c1c1e; margin-bottom: 3px; }
+.write-sublabel { font-size: 12px; color: #888; margin-bottom: 10px; }
+.write-area textarea { width: 100%; border: 1px solid #e5e5ea; border-radius: 10px; padding: 9px 12px; font-size: 13px; background: #f7f7f9; color: #1c1c1e; outline: none; font-family: inherit; resize: none; height: 90px; transition: border-color 0.15s; }
+.write-area textarea:focus { border-color: #7F77DD; background: #fff; }
+.post-btn { padding: 8px 20px; border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; color: #fff; transition: opacity 0.15s; margin-top: 10px; }
+.post-btn:hover { opacity: 0.85; }
+.post-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.post-btn-a { background: #7F77DD; }
+.post-btn-b { background: #1D9E75; }
+.posts { display: flex; flex-direction: column; gap: 12px; }
+.post-card { background: #fff; border: 1px solid #e5e5ea; border-radius: 14px; padding: 1rem; }
+.post-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.post-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+.avatar-a { background: #EEEDFE; color: #3C3489; }
+.avatar-b { background: #E1F5EE; color: #085041; }
+.post-name { font-size: 13px; font-weight: 600; color: #1c1c1e; }
+.post-part { font-size: 11px; padding: 2px 8px; border-radius: 8px; display: flex; align-items: center; gap: 4px; }
+.part-a { background: #EEEDFE; color: #534AB7; }
+.part-b { background: #E1F5EE; color: #0F6E56; }
+.post-time { font-size: 11px; color: #bbb; margin-left: auto; }
+.post-body { font-size: 14px; color: #1c1c1e; line-height: 1.7; margin-bottom: 10px; word-break: keep-all; }
+.comments { border-top: 1px solid #f0f0f5; padding-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.comment { display: flex; gap: 8px; align-items: flex-start; }
+.comment-avatar { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; flex-shrink: 0; margin-top: 2px; }
+.comment-body { flex: 1; }
+.comment-name { font-size: 11px; font-weight: 600; color: #888; }
+.comment-text { font-size: 13px; color: #1c1c1e; line-height: 1.5; }
+.comment-input-row { display: flex; gap: 6px; align-items: center; margin-top: 8px; }
+.comment-input-row input { flex: 1; border: 1px solid #e5e5ea; border-radius: 14px; padding: 6px 12px; font-size: 12px; background: #f7f7f9; color: #1c1c1e; outline: none; font-family: inherit; }
+.comment-input-row input:focus { border-color: #7F77DD; }
+.cmnt-btn { padding: 6px 14px; border-radius: 12px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; color: #fff; background: #7F77DD; }
+.empty { text-align: center; color: #bbb; font-size: 13px; padding: 2.5rem; }
+.loading { text-align: center; color: #aaa; font-size: 13px; padding: 1.5rem; }
+.sync-bar { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: #aaa; padding: 4px 0; }
+.sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #1D9E75; display: inline-block; margin-right: 4px; }
+.refresh-btn { font-size: 11px; color: #7F77DD; background: none; border: none; cursor: pointer; font-family: inherit; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="screen active" id="s-setup">
+    <div class="setup-card">
+      <div class="setup-title">한-베 민요 해석</div>
+      <div class="setup-sub">이름을 입력하고 담당 파트를 선택해주세요!</div>
+      <div class="field">
+        <label>이름</label>
+        <input id="inp-name" type="text" placeholder="예) 김민준" maxlength="10" oninput="checkSetup()" />
+      </div>
+      <div class="field">
+        <label>담당 파트</label>
+        <div class="part-btns">
+          <div class="part-btn" id="btn-a" onclick="selectPart('a')">
+            <svg width="24" height="16" viewBox="0 0 30 20" style="flex-shrink:0;border-radius:2px;border:0.5px solid #ddd;">
+              <rect width="30" height="20" fill="#fff"/>
+              <path d="M15,10 m0,-4 a4,4 0 0,1 0,8 a2,2 0 0,1 0,-4 a2,2 0 0,0 0,-4z" fill="#CD2E3A"/>
+              <path d="M15,10 m0,4 a4,4 0 0,1 0,-8 a2,2 0 0,1 0,4 a2,2 0 0,0 0,4z" fill="#003478"/>
+              <line x1="3" y1="3" x2="8" y2="3" stroke="#000" stroke-width="1.2"/>
+              <line x1="3" y1="4.8" x2="8" y2="4.8" stroke="#000" stroke-width="1.2"/>
+              <line x1="3" y1="6.6" x2="8" y2="6.6" stroke="#000" stroke-width="1.2"/>
+              <line x1="22" y1="13.4" x2="27" y2="13.4" stroke="#000" stroke-width="1.2"/>
+              <line x1="22" y1="15.2" x2="27" y2="15.2" stroke="#000" stroke-width="1.2"/>
+              <line x1="22" y1="17" x2="27" y2="17" stroke="#000" stroke-width="1.2"/>
+              <line x1="3" y1="13.4" x2="8" y2="13.4" stroke="#000" stroke-width="1.2"/>
+              <line x1="3.5" y1="15.2" x2="5.5" y2="15.2" stroke="#000" stroke-width="1.2"/>
+              <line x1="6.5" y1="15.2" x2="8" y2="15.2" stroke="#000" stroke-width="1.2"/>
+              <line x1="3" y1="17" x2="8" y2="17" stroke="#000" stroke-width="1.2"/>
+              <line x1="22" y1="3" x2="27" y2="3" stroke="#000" stroke-width="1.2"/>
+              <line x1="22.5" y1="4.8" x2="24.5" y2="4.8" stroke="#000" stroke-width="1.2"/>
+              <line x1="25.5" y1="4.8" x2="27" y2="4.8" stroke="#000" stroke-width="1.2"/>
+              <line x1="22" y1="6.6" x2="27" y2="6.6" stroke="#000" stroke-width="1.2"/>
+            </svg>
+            본조아리랑
+          </div>
+          <div class="part-btn" id="btn-b" onclick="selectPart('b')">
+            <svg width="24" height="16" viewBox="0 0 30 20" style="flex-shrink:0;border-radius:2px;">
+              <rect width="30" height="20" fill="#DA251D"/>
+              <polygon points="15,3 16.8,8.5 22.5,8.5 17.8,11.8 19.6,17.3 15,14 10.4,17.3 12.2,11.8 7.5,8.5 13.2,8.5" fill="#FFFF00"/>
+            </svg>
+            베오꽃과 구름
+          </div>
+        </div>
+      </div>
+      <button class="start-btn" id="start-btn" onclick="startBoard()" disabled>시작하기 →</button>
+    </div>
+  </div>
+
+  <div class="screen" id="s-board">
+    <div class="board">
+      <div class="board-header">
+        <div class="board-title">한-베 민요 해석</div>
+        <div class="user-badge" id="user-badge"></div>
+      </div>
+      <div class="sync-bar">
+        <span><span class="sync-dot"></span>실시간 공유 중</span>
+        <button class="refresh-btn" onclick="loadPosts()">↻ 새로고침</button>
+      </div>
+      <div class="tabs">
+        <div class="tab active-a" id="tab-a" onclick="switchTab('a')">
+          <svg width="18" height="12" viewBox="0 0 30 20"><rect width="30" height="20" fill="#fff"/><path d="M15,10 m0,-4 a4,4 0 0,1 0,8 a2,2 0 0,1 0,-4 a2,2 0 0,0 0,-4z" fill="#CD2E3A"/><path d="M15,10 m0,4 a4,4 0 0,1 0,-8 a2,2 0 0,1 0,4 a2,2 0 0,0 0,4z" fill="#003478"/><line x1="3" y1="3" x2="8" y2="3" stroke="#000" stroke-width="1.2"/><line x1="3" y1="4.8" x2="8" y2="4.8" stroke="#000" stroke-width="1.2"/><line x1="3" y1="6.6" x2="8" y2="6.6" stroke="#000" stroke-width="1.2"/><line x1="22" y1="13.4" x2="27" y2="13.4" stroke="#000" stroke-width="1.2"/><line x1="22" y1="15.2" x2="27" y2="15.2" stroke="#000" stroke-width="1.2"/><line x1="22" y1="17" x2="27" y2="17" stroke="#000" stroke-width="1.2"/><line x1="3" y1="13.4" x2="8" y2="13.4" stroke="#000" stroke-width="1.2"/><line x1="3.5" y1="15.2" x2="5.5" y2="15.2" stroke="#000" stroke-width="1.2"/><line x1="6.5" y1="15.2" x2="8" y2="15.2" stroke="#000" stroke-width="1.2"/><line x1="3" y1="17" x2="8" y2="17" stroke="#000" stroke-width="1.2"/><line x1="22" y1="3" x2="27" y2="3" stroke="#000" stroke-width="1.2"/><line x1="22.5" y1="4.8" x2="24.5" y2="4.8" stroke="#000" stroke-width="1.2"/><line x1="25.5" y1="4.8" x2="27" y2="4.8" stroke="#000" stroke-width="1.2"/><line x1="22" y1="6.6" x2="27" y2="6.6" stroke="#000" stroke-width="1.2"/></svg>
+          본조아리랑
+        </div>
+        <div class="tab" id="tab-b" onclick="switchTab('b')">
+          <svg width="18" height="12" viewBox="0 0 30 20"><rect width="30" height="20" fill="#DA251D"/><polygon points="15,3 16.8,8.5 22.5,8.5 17.8,11.8 19.6,17.3 15,14 10.4,17.3 12.2,11.8 7.5,8.5 13.2,8.5" fill="#FFFF00"/></svg>
+          베오꽃과 구름
+        </div>
+      </div>
+      <div class="write-area">
+        <div class="write-label" id="write-label">식민지배 시절 본조아리랑에 대한 가사 해석을 써봐요!</div>
+        <div class="write-sublabel">가사 속 단어의 표면적 의미와 식민지배 시절 해석된 의미를 비교하여 써봅시다.</div>
+        <textarea id="write-text" placeholder="예) '님'은 표면적으로는 연인이지만, 식민지배 시절에는 잃어버린 조국을 의미했을 것 같아요."></textarea>
+        <button class="post-btn post-btn-a" id="post-btn" onclick="addPost()">올리기</button>
+      </div>
+      <div class="posts" id="posts-area"><div class="loading">글을 불러오는 중...</div></div>
+    </div>
+  </div>
+
+</div>
+<script>
+const API = 'https://api.anthropic.com/v1/messages';
+const MODEL = 'claude-sonnet-4-20250514';
+let myName='', myPart='', curTab='a';
+const flagA='<svg width="14" height="10" viewBox="0 0 30 20" style="border:0.5px solid #eee;border-radius:1px;vertical-align:middle;"><rect width="30" height="20" fill="#fff"/><path d="M15,10 m0,-4 a4,4 0 0,1 0,8 a2,2 0 0,1 0,-4 a2,2 0 0,0 0,-4z" fill="#CD2E3A"/><path d="M15,10 m0,4 a4,4 0 0,1 0,-8 a2,2 0 0,1 0,4 a2,2 0 0,0 0,4z" fill="#003478"/><line x1="3" y1="3" x2="8" y2="3" stroke="#000" stroke-width="1.2"/><line x1="3" y1="4.8" x2="8" y2="4.8" stroke="#000" stroke-width="1.2"/><line x1="3" y1="6.6" x2="8" y2="6.6" stroke="#000" stroke-width="1.2"/><line x1="22" y1="13.4" x2="27" y2="13.4" stroke="#000" stroke-width="1.2"/><line x1="22" y1="15.2" x2="27" y2="15.2" stroke="#000" stroke-width="1.2"/><line x1="22" y1="17" x2="27" y2="17" stroke="#000" stroke-width="1.2"/><line x1="3" y1="13.4" x2="8" y2="13.4" stroke="#000" stroke-width="1.2"/><line x1="3.5" y1="15.2" x2="5.5" y2="15.2" stroke="#000" stroke-width="1.2"/><line x1="6.5" y1="15.2" x2="8" y2="15.2" stroke="#000" stroke-width="1.2"/><line x1="3" y1="17" x2="8" y2="17" stroke="#000" stroke-width="1.2"/><line x1="22" y1="3" x2="27" y2="3" stroke="#000" stroke-width="1.2"/><line x1="22.5" y1="4.8" x2="24.5" y2="4.8" stroke="#000" stroke-width="1.2"/><line x1="25.5" y1="4.8" x2="27" y2="4.8" stroke="#000" stroke-width="1.2"/><line x1="22" y1="6.6" x2="27" y2="6.6" stroke="#000" stroke-width="1.2"/></svg>';
+const flagB='<svg width="14" height="10" viewBox="0 0 30 20" style="vertical-align:middle;"><rect width="30" height="20" fill="#DA251D"/><polygon points="15,3 16.8,8.5 22.5,8.5 17.8,11.8 19.6,17.3 15,14 10.4,17.3 12.2,11.8 7.5,8.5 13.2,8.5" fill="#FFFF00"/></svg>';
+
+async function apiCall(prompt) {
+  const res = await fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: 1000,
+      system: 'You are a storage manager. Respond ONLY with valid JSON, no explanation.',
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await res.json();
+  const text = data.content?.[0]?.text || '{}';
+  try { return JSON.parse(text.replace(/```json|```/g, '').trim()); }
+  catch { return {}; }
+}
+
+async function loadPosts() {
+  const area = document.getElementById('posts-area');
+  area.innerHTML = '<div class="loading">글 불러오는 중...</div>';
+  try {
+    const data = await apiCall(
+      `Return the current shared padlet data as JSON. If no data exists yet, return {"posts": []}. ` +
+      `The data key is "hanviet_padlet_v1". Return ONLY the JSON object with a "posts" array.`
+    );
+    renderPosts(data.posts || []);
+  } catch(e) {
+    area.innerHTML = '<div class="empty">글을 불러오지 못했어요. 새로고침 해보세요.</div>';
+  }
+}
+
+async function addPost() {
+  const text = document.getElementById('write-text').value.trim();
+  if (!text) return;
+  const btn = document.getElementById('post-btn');
+  btn.disabled = true;
+  btn.textContent = '올리는 중...';
+  try {
+    const current = await apiCall(
+      `Return the current shared padlet data as JSON for key "hanviet_padlet_v1". Return ONLY {"posts": [...]}.`
+    );
+    const posts = current.posts || [];
+    posts.push({
+      id: Date.now(),
+      name: myName,
+      part: myPart,
+      tab: curTab,
+      text,
+      time: new Date().toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'}),
+      comments: []
+    });
+    await apiCall(
+      `Store this padlet data for key "hanviet_padlet_v1" and confirm by returning it: ${JSON.stringify({posts})}`
+    );
+    document.getElementById('write-text').value = '';
+    await loadPosts();
+  } catch(e) {
+    alert('글 올리기에 실패했어요. 다시 시도해주세요.');
+  }
+  btn.disabled = false;
+  btn.textContent = '올리기';
+}
+
+async function addComment(postId) {
+  const inp = document.getElementById('cinp-' + postId);
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.disabled = true;
+  try {
+    const current = await apiCall(
+      `Return the current shared padlet data as JSON for key "hanviet_padlet_v1". Return ONLY {"posts": [...]}.`
+    );
+    const posts = current.posts || [];
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+      post.comments = post.comments || [];
+      post.comments.push({ name: myName, part: myPart, text });
+    }
+    await apiCall(
+      `Store this padlet data for key "hanviet_padlet_v1" and confirm: ${JSON.stringify({posts})}`
+    );
+    inp.value = '';
+    await loadPosts();
+  } catch(e) {
+    alert('댓글 달기에 실패했어요.');
+  }
+  inp.disabled = false;
+}
+
+function renderPosts(allPosts) {
+  const area = document.getElementById('posts-area');
+  const list = allPosts.filter(p => p.tab === curTab);
+  if (list.length === 0) {
+    area.innerHTML = '<div class="empty">아직 글이 없어요. 첫 번째로 올려봐요!</div>';
+    return;
+  }
+  area.innerHTML = '';
+  list.slice().reverse().forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'post-card';
+    const flag = p.part === 'a' ? flagA : flagB;
+    const partLabel = p.part === 'a' ? '본조아리랑' : '베오꽃과 구름';
+    const commentsHTML = (p.comments || []).map(c => `
+      <div class="comment">
+        <div class="comment-avatar avatar-${c.part}">${c.name.slice(0,2)}</div>
+        <div class="comment-body">
+          <div class="comment-name">${c.name}</div>
+          <div class="comment-text">${c.text}</div>
+        </div>
+      </div>`).join('');
+    card.innerHTML = `
+      <div class="post-top">
+        <div class="post-avatar avatar-${p.part}">${p.name.slice(0,2)}</div>
+        <div class="post-name">${p.name}</div>
+        <div class="post-part part-${p.part}">${flag}&nbsp;${partLabel}</div>
+        <div class="post-time">${p.time}</div>
+      </div>
+      <div class="post-body">${p.text}</div>
+      <div class="comments">
+        ${commentsHTML}
+        <div class="comment-input-row">
+          <input id="cinp-${p.id}" type="text" placeholder="댓글 달기..." onkeydown="if(event.key==='Enter') addComment(${p.id})" />
+          <button class="cmnt-btn" onclick="addComment(${p.id})">등록</button>
+        </div>
+      </div>`;
+    area.appendChild(card);
+  });
+}
+
+function checkSetup() {
+  const n = document.getElementById('inp-name').value.trim();
+  document.getElementById('start-btn').disabled = !(n && myPart);
+}
+function selectPart(p) {
+  myPart = p;
+  document.getElementById('btn-a').className = 'part-btn' + (p === 'a' ? ' sel-a' : '');
+  document.getElementById('btn-b').className = 'part-btn' + (p === 'b' ? ' sel-b' : '');
+  checkSetup();
+}
+function startBoard() {
+  myName = document.getElementById('inp-name').value.trim();
+  if (!myName || !myPart) return;
+  const badge = document.getElementById('user-badge');
+  badge.innerHTML = (myPart === 'a' ? flagA : flagB) + '&nbsp;' + myName + ' · ' + (myPart === 'a' ? '본조아리랑' : '베오꽃과 구름');
+  badge.className = 'user-badge badge-' + myPart;
+  document.getElementById('s-setup').className = 'screen';
+  document.getElementById('s-board').className = 'screen active';
+  switchTab('a');
+  loadPosts();
+  setInterval(loadPosts, 15000);
+}
+function switchTab(t) {
+  curTab = t;
+  document.getElementById('tab-a').className = 'tab' + (t === 'a' ? ' active-a' : '');
+  document.getElementById('tab-b').className = 'tab' + (t === 'b' ? ' active-b' : '');
+  document.getElementById('write-label').textContent = '식민지배 시절 ' + (t === 'a' ? '본조아리랑' : '베오꽃과 구름') + '에 대한 가사 해석을 써봐요!';
+  document.getElementById('post-btn').className = 'post-btn post-btn-' + t;
+  loadPosts();
+}
+</script>
+</body>
+</html>
